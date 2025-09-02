@@ -1,0 +1,2 @@
+# VactEduturismo
+For game purposes
