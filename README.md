@@ -1,2 +1,2 @@
 # VactEduturismo
-For game purposes
+For game and website purposes
