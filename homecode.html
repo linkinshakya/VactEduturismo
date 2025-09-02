@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>VACT Eduturismo — Explore • Learn • Travel</title>
+  <meta name="theme-color" content="#0b1b2a" />
+  <style>
+    :root{
+      --bg:#0b1b2a;          /* deep blue background */
+      --fg:#e6f1ff;          /* light foreground */
+      --muted:#c9d6e8;
+      --brand:#00c2a8;       /* teal */
+      --brand-2:#ffb703;     /* warm accent */
+      --glass: rgba(7,17,27,.55);
+      --shadow:0 20px 40px rgba(0,0,0,.25);
+      --radius: 18px;
+      --maxw: 1200px;
+    }
+    *,*:before,*:after{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+      color:var(--fg); background:var(--bg);
+    }
+    /* ---------- NAV ---------- */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px clamp(12px,3vw,28px);backdrop-filter:saturate(1.2) blur(8px); background:linear-gradient(180deg, rgba(5,10,16,.7), rgba(5,10,16,.35) 60%, transparent);}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.4px}
+    .logo .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#35e0c9);display:grid;place-items:center; box-shadow: var(--shadow)}
+    .logo .mark span{font-weight:900;color:#062822}
+    .nav a{color:var(--fg);text-decoration:none;padding:8px 12px;border-radius:10px;opacity:.92}
+    .nav a:hover{background:rgba(255,255,255,.08)}
+    .cta{background:linear-gradient(135deg,var(--brand),#22e6cc);color:#04221e;font-weight:700}
+
+    /* ---------- HERO ---------- */
+    .hero{position:relative;min-height:100svh;display:grid;place-items:center;overflow:hidden}
+    .bg-wrapper{position:absolute;inset:0;z-index:-2}
+    .bg-slide{position:absolute;inset:0;opacity:0;transition:opacity 800ms ease}
+    .bg-slide.active{opacity:1}
+    .bg-slide video,.bg-slide img{width:100%;height:100%;object-fit:cover;object-position:center}
+    .overlay{position:absolute;inset:0;background: radial-gradient(120% 60% at 50% 40%,rgba(0,0,0,.0),rgba(0,0,0,.55) 60%, rgba(0,0,0,.8)); z-index:-1}
+
+    .hero-content{width:min(95%, var(--maxw));padding: clamp(16px, 4vw, 40px); text-align:center}
+    .kicker{display:inline-block;margin-bottom:10px;padding:6px 10px;border-radius:999px;background:rgba(0,194,168,.18); color:#d6fffa;border:1px solid rgba(0,194,168,.35);font-weight:600}
+    .title{font-size:clamp(30px, 6vw, 64px); line-height:1.05; margin:12px 0 10px; font-weight:900; text-shadow:0 12px 36px rgba(0,0,0,.45)}
+    .subtitle{font-size:clamp(15px, 2.4vw, 22px); color:var(--muted); max-width:900px; margin:0 auto 20px}
+
+    /* Search / CTA panel */
+    .glass-panel{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center; background:var(--glass); border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow); padding:12px; border-radius: var(--radius); max-width:980px; margin: 20px auto 0}
+    .input{flex:1 1 280px; display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px}
+    .input input{background:transparent;border:0;outline:0;color:#fff;width:100%;font-size:16px}
+    .btn{appearance:none;border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn-primary{background:linear-gradient(135deg,var(--brand),#35ffd9); color:#062822}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.22); color:#fff}
+
+    /* ---------- SECTION: CATEGORIES ---------- */
+    .section{padding: clamp(30px, 6vw, 70px) clamp(14px, 4vw, 24px); background:linear-gradient(180deg, rgba(11,27,42,1), rgba(11,27,42,.92))}
+    .section h2{margin:0 auto 18px;max-width:var(--maxw);font-size: clamp(22px, 3.2vw, 34px)}
+
+    .grid{margin:0 auto; max-width:var(--maxw); display:grid; grid-template-columns: repeat(12, 1fr); gap:14px}
+    .card{grid-column: span 12; position:relative; border-radius:16px; overflow:hidden; background:#0f1f2e; border:1px solid rgba(255,255,255,.08)}
+    @media(min-width:720px){ .card{grid-column: span 6} }
+    @media(min-width:1024px){ .card{grid-column: span 4} }
+    .card img{width:100%;height:220px;object-fit:cover}
+    .card .card-body{padding:14px}
+    .tag{display:inline-block; font-size:12px; opacity:.9; background:rgba(255,255,255,.08); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12)}
+    .card h3{margin:10px 0 6px}
+    .card p{margin:0; color:var(--muted)}
+
+    /* ---------- FOOTER ---------- */
+    footer{padding:20px 24px; color:#b5c8dc; background:#081521; border-top:1px solid rgba(255,255,255,.06)}
+
+    /* Accessibility helpers */
+    @media (prefers-reduced-motion: reduce){
+      .bg-slide{transition:none}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav" role="navigation" aria-label="Primary">
+    <div class="logo" aria-label="VACT Eduturismo">
+      <div class="mark" aria-hidden="true"><span>V</span></div>
+      VACT Eduturismo
+    </div>
+    <nav class="links" aria-label="Site">
+      <a href="#trips">Trips</a>
+      <a href="#workshops">Workshops</a>
+      <a href="#safety">Safety</a>
+      <a class="cta" href="#contact">Enquire</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO with rotating video/image background -->
+    <section class="hero" aria-label="Hero">
+      <div class="bg-wrapper" id="bgWrapper">
+        <!-- Slides are injected by JS for easier control/lazy-load -->
+      </div>
+      <div class="overlay" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <span class="kicker">Explore • Learn • Travel</span>
+        <h1 class="title">Make every field trip unforgettable.</h1>
+        <p class="subtitle">Curated edutourism to Museums, Heritage Sites, Science Centres and Workshops across Delhi–NCR and beyond. Safe, supervised, and genuinely engaging for Classes 6–10 and families.</p>
+
+        <div class="glass-panel" role="search">
+          <div class="input"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input id="q" type="search" placeholder="Search places: Red Fort, Science Museum, Lodhi Art District…" aria-label="Search" />
+          </div>
+          <button class="btn btn-primary" id="btnSearch">Search Trips</button>
+          <button class="btn btn-ghost" id="btnPlay">Pause Background</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories / Featured -->
+    <section class="section" id="trips" aria-label="Featured categories">
+      <h2>Popular Experiences</h2>
+      <div class="grid">
+        <article class="card">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1580144186205-bf82cfe1d1a4?q=80&w=1600&auto=format&fit=crop" alt="Red Fort, Delhi" />
+          <div class="card-body">
+            <span class="tag">History</span>
+            <h3>Red Fort + Heritage Museum</h3>
+            <p>Guided exploration with quizzes aligned to CBSE Class 6–10.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1562166435-849823f76f7f?q=80&w=1600&auto=format&fit=crop" alt="Science exhibits" />
+          <div class="card-body">
+            <span class="tag">Science</span>
+            <h3>National Science Centre</h3>
+            <p>Hands-on demos, energy & robotics workshops, and safety briefings.</p>
+          </div>
+        </article>
+        <article class="card">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?q=80&w=1600&auto=format&fit=crop" alt="Art gallery" />
+          <div class="card-body">
+            <span class="tag">Art</span>
+            <h3>Modern Art Walk</h3>
+            <p>Museums & street-art tour with creative challenges and reflection.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> VACT Eduturismo • Safety-first tours • Teachers CPR-certified • Live check-in
+  </footer>
+
+  <script>
+    // --- CONFIG: background slides (mix video + image) ---
+    const slides = [
+      {
+        type: 'video',
+        poster: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?q=80&w=1600&auto=format&fit=crop',
+        sources: [
+          {src: 'https://cdn.coverr.co/videos/coverr-indian-heritage-3130/1080p.mp4', type: 'video/mp4'},
+          // Tip: host your own .webm for better compression
+        ]
+      },
+      {
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1580136579312-94651dfd596d?q=80&w=2000&auto=format&fit=crop',
+        alt: 'Humayun’s Tomb at sunset'
+      },
+      {
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1468777675496-5782faaea55b?q=80&w=2000&auto=format&fit=crop',
+        alt: 'National Science Centre exhibits'
+      }
+    ];
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const bgWrapper = document.getElementById('bgWrapper');
+    const btnPlay = document.getElementById('btnPlay');
+    let current = 0; let playing = true; let timer = null; const DURATION = 7000;
+
+    function createSlideEl(item){
+      const wrap = document.createElement('div');
+      wrap.className = 'bg-slide';
+
+      if(item.type === 'video' && !prefersReduced){
+        const v = document.createElement('video');
+        v.setAttribute('playsinline','');
+        v.setAttribute('muted','');
+        v.setAttribute('autoplay','');
+        v.setAttribute('loop','');
+        v.setAttribute('preload','none');
+        if(item.poster) v.setAttribute('poster', item.poster);
+        item.sources.forEach(s=>{ const source = document.createElement('source'); source.src=s.src; source.type=s.type; v.appendChild(source); });
+        // pause when offscreen to save battery
+        const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(!e.isIntersecting) v.pause(); else if(playing) v.play().catch(()=>{}); }); });
+        setTimeout(()=>io.observe(v),0);
+        wrap.appendChild(v);
+      } else {
+        const img = document.createElement('img');
+        img.loading='eager'; img.decoding='async';
+        img.src = item.src || item.poster; img.alt = item.alt || '';
+        wrap.appendChild(img);
+      }
+      return wrap;
+    }
+
+    function mountSlides(){
+      slides.forEach((s,i)=>{
+        const el = createSlideEl(s);
+        if(i===0) el.classList.add('active');
+        bgWrapper.appendChild(el);
+      });
+    }
+
+    function nextSlide(){
+      const children = [...bgWrapper.children]; if(children.length<2) return;
+      children[current].classList.remove('active');
+      current = (current+1) % children.length;
+      children[current].classList.add('active');
+    }
+
+    function loop(){
+      clearInterval(timer);
+      if(playing){ timer = setInterval(nextSlide, DURATION); }
+    }
+
+    btnPlay.addEventListener('click',()=>{
+      playing = !playing; btnPlay.textContent = playing? 'Pause Background' : 'Play Background';
+      // also pause any videos
+      [...bgWrapper.querySelectorAll('video')].forEach(v=> playing? v.play().catch(()=>{}): v.pause());
+      loop();
+    });
+
+    document.getElementById('btnSearch').addEventListener('click',()=>{
+      const q = (document.getElementById('q').value||'').trim();
+      if(!q){ alert('Type a place or theme to search trips.'); return; }
+      // Replace with your Odoo route or search page
+      window.location.href = '/search?q=' + encodeURIComponent(q);
+    });
+
+    // init
+    mountSlides(); loop();
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
