@@ -17,7 +17,7 @@
       --shadow:0 20px 40px rgba(0,0,0,.25);
       --radius: 18px;
       --maxw: 1200px;
-      --navh: 64px;                 /* will be updated by JS to exact height */
+      --navh: 64px;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
@@ -46,7 +46,6 @@
     .nav a:hover{background:rgba(255,255,255,.08)}
     .cta{background:linear-gradient(135deg,var(--brand),#22e6cc);color:#04221e;font-weight:700}
 
-    /* Collapsible menu on narrow screens */
     .menu-toggle{display:none; background:transparent;border:1px solid rgba(255,255,255,.25);color:var(--fg);padding:8px 12px;border-radius:10px}
     @media (max-width:640px){
       .links{display:none}
@@ -59,7 +58,6 @@
     /* ---------- HERO ---------- */
     .hero{
       position:relative;
-      /* Use dynamic viewport height minus nav; prevents overlap on mobile address bar show/hide */
       min-height: calc(100dvh - var(--navh) - var(--safe-bottom));
       padding-top: calc(var(--navh) + 10px);
       display:grid; place-items:center; overflow:hidden;
@@ -83,7 +81,6 @@
     .title{font-size:clamp(26px, 6vw, 60px); line-height:1.06; margin:10px 0 8px; font-weight:900; text-wrap:balance; text-shadow:0 12px 36px rgba(0,0,0,.45)}
     .subtitle{font-size:clamp(14px, 2.6vw, 20px); color:var(--muted); max-width:900px; margin:0 auto 16px}
 
-    /* Search / CTA panel */
     .glass-panel{
       display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:stretch;
       background:var(--glass); border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow);
@@ -96,7 +93,6 @@
     .btn-primary{background:linear-gradient(135deg,var(--brand),#35ffd9); color:#062822}
     .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.22); color:#fff}
 
-    /* tighter layout on very small screens */
     @media (max-width:480px){
       .hero{padding-top: calc(var(--navh) + 6px)}
       .glass-panel{flex-direction:column; align-items:stretch}
@@ -106,24 +102,9 @@
       .subtitle{font-size:clamp(13px, 3.2vw, 18px)}
     }
 
-    /* ---------- SECTION: CATEGORIES ---------- */
-    .section{padding: clamp(24px, 6vw, 70px) clamp(14px, 4vw, 24px); background:linear-gradient(180deg, rgba(11,27,42,1), rgba(11,27,42,.92))}
-    .section h2{margin:0 auto 18px;max-width:var(--maxw);font-size: clamp(20px, 3.2vw, 34px); text-wrap:balance}
-
-    .grid{margin:0 auto; max-width:var(--maxw); display:grid; grid-template-columns: repeat(12, 1fr); gap:14px}
-    .card{grid-column: span 12; position:relative; border-radius:16px; overflow:hidden; background:#0f1f2e; border:1px solid rgba(255,255,255,.08)}
-    @media(min-width:720px){ .card{grid-column: span 6} }
-    @media(min-width:1024px){ .card{grid-column: span 4} }
-    .card img{width:100%; height: clamp(180px, 26vw, 240px); object-fit:cover}
-    .card .card-body{padding:14px}
-    .tag{display:inline-block; font-size:12px; opacity:.9; background:rgba(255,255,255,.08); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12)}
-    .card h3{margin:10px 0 6px}
-    .card p{margin:0; color:var(--muted)}
-
     /* ---------- FOOTER ---------- */
     footer{padding:16px 20px max(16px, var(--safe-bottom)); color:#b5c8dc; background:#081521; border-top:1px solid rgba(255,255,255,.06)}
 
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
       .bg-slide{transition:none}
     }
@@ -146,7 +127,7 @@
     </nav>
   </header>
 
-   <main>
+  <main>
     <!-- HERO with rotating video/image background -->
     <section class="hero" aria-label="Hero">
       <div class="bg-wrapper" id="bgWrapper"></div>
@@ -172,8 +153,8 @@
   <footer>
     © <span id="year"></span> VACT Eduturismo • Safety-first tours • Teachers CPR-certified • Live check-in
   </footer>
+
   <script>
-    // Slides: mix your own assets here
     const slides = [
       { type: 'image', src: 'assets/images/red-fort.webp', alt: 'Red Fort' },
       { type: 'image', src: 'assets/images/lotus-temple-newdelhi.jpeg', alt: 'Lotus Temple' }
@@ -192,7 +173,6 @@
     function createSlideEl(item){
       const wrap = document.createElement('div');
       wrap.className = 'bg-slide';
-
       if(item.type === 'video' && !prefersReduced){
         const v = document.createElement('video');
         v.setAttribute('playsinline','');
@@ -202,8 +182,6 @@
         v.setAttribute('preload','none');
         if(item.poster) v.setAttribute('poster', item.poster);
         (item.sources||[]).forEach(s=>{ const source = document.createElement('source'); source.src=s.src; source.type=s.type; v.appendChild(source); });
-        const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(!e.isIntersecting) v.pause(); else if(playing) v.play().catch(()=>{}); }); });
-        setTimeout(()=>io.observe(v),0);
         wrap.appendChild(v);
       } else {
         const img = document.createElement('img');
@@ -234,27 +212,23 @@
       if(playing){ timer = setInterval(nextSlide, DURATION); }
     }
 
-    // Mobile menu toggle
     menuToggle?.addEventListener('click', ()=>{
       const open = menuLinks.classList.toggle('open');
       menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-    // Pause / play background
     btnPlay?.addEventListener('click',()=>{
       playing = !playing; btnPlay.textContent = playing? 'Pause Background' : 'Play Background';
       [...bgWrapper.querySelectorAll('video')].forEach(v=> playing? v.play().catch(()=>{}): v.pause());
       loop();
     });
 
-    // Simple search redirect
     document.getElementById('btnSearch')?.addEventListener('click',()=>{
       const q = (document.getElementById('q').value||'').trim();
       if(!q){ alert('Type a place or theme to search trips.'); return; }
       window.location.href = '/search?q=' + encodeURIComponent(q);
     });
 
-    // Set --navh to actual nav height (prevents hero overlap on mobile)
     function setNavHeightVar(){
       const h = nav?.offsetHeight || 64;
       document.documentElement.style.setProperty('--navh', h + 'px');
@@ -263,7 +237,6 @@
     window.addEventListener('load', setNavHeightVar);
     setNavHeightVar();
 
-    // init
     mountSlides(); loop();
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
