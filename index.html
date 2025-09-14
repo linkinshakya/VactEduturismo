@@ -7,125 +7,104 @@
   <meta name="theme-color" content="#0b1b2a" />
   <style>
     :root{
-      --bg:#0b1b2a;
-      --fg:#e6f1ff;
-      --muted:#c9d6e8;
-      --brand:#00c2a8;
-      --brand-2:#ffb703;
-      --glass: rgba(7,17,27,.55);
-      --shadow:0 20px 40px rgba(0,0,0,.25);
-      --radius: 18px;
-      --maxw: 1200px;
-      --navh: 64px; /* set by JS */
+      --bg:#0b1b2a; --fg:#e6f1ff; --muted:#c9d6e8;
+      --brand:#00c2a8; --brand-2:#ffb703;
+      --glass: rgba(7,17,27,.55); --shadow:0 20px 40px rgba(0,0,0,.25);
+      --radius:18px; --maxw:1200px;
+      --navh:64px; /* set by JS */ 
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
     *,*:before,*:after{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
       color:var(--fg); background:var(--bg);
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-      overflow-x:hidden; /* prevent side scroll */
-      touch-action:manipulation;
+      overflow-x:hidden;
     }
 
-    /* When embedded in Odoo (iframe), add class .is-embed to <html> + <body> via JS */
+    /* ====== EMBED MODE (inside Odoo iframe) ====== */
     html.is-embed, body.is-embed{
-      height:100dvh;           /* hard lock to viewport */
-      overflow:hidden;         /* remove inner scrollbar */
-      overscroll-behavior:none;
+      position:fixed; inset:0; width:100%; height:100dvh;
+      overflow:hidden; overscroll-behavior:none;
     }
-    body.is-embed footer{display:none;} /* no extra height below hero */
+    body.is-embed footer{display:none;}
 
     /* ---------- NAV ---------- */
     .nav{
-      position:fixed; inset:0 0 auto 0;
-      z-index:50; display:flex; align-items:center; justify-content:space-between; gap:10px;
+      position:fixed; inset:0 0 auto 0; z-index:50;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding: max(10px, var(--safe-top)) clamp(12px,3vw,28px);
       backdrop-filter:saturate(1.2) blur(8px);
       background:linear-gradient(180deg, rgba(5,10,16,.9), rgba(5,10,16,.35) 60%, transparent);
     }
-    .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.4px; white-space:nowrap}
-    .logo .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#35e0c9);display:grid;place-items:center; box-shadow: var(--shadow)}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
+    .logo .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#35e0c9);display:grid;place-items:center;box-shadow:var(--shadow)}
     .logo .mark span{font-weight:900;color:#062822}
     .links{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
     .nav a{color:var(--fg);text-decoration:none;padding:8px 10px;border-radius:10px;opacity:.92}
     .nav a:hover{background:rgba(255,255,255,.08)}
     .cta{background:linear-gradient(135deg,var(--brand),#22e6cc);color:#04221e;font-weight:700}
-
-    .menu-toggle{display:none; background:transparent;border:1px solid rgba(255,255,255,.25);color:var(--fg);padding:8px 12px;border-radius:10px}
+    .menu-toggle{display:none;background:transparent;border:1px solid rgba(255,255,255,.25);color:var(--fg);padding:8px 12px;border-radius:10px}
     @media (max-width:640px){
       .links{display:none}
       .menu-toggle{display:inline-block}
-      .links.open{
-        display:flex; position:absolute; top:calc(var(--navh)); right:12px; left:12px;
-        background:rgba(6,14,22,.96); border:1px solid rgba(255,255,255,.12);
-        border-radius:14px; padding:8px; gap:4px
-      }
-      .links.open a{display:block; width:100%; text-align:center}
+      .links.open{display:flex;position:absolute;top:calc(var(--navh));right:12px;left:12px;background:rgba(6,14,22,.96);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:8px;gap:4px}
+      .links.open a{display:block;width:100%;text-align:center}
     }
 
     /* ---------- HERO ---------- */
     .hero{
       position:relative;
-      min-height: calc(100dvh - var(--navh) - var(--safe-bottom));
+      min-height: calc(100svh - var(--navh) - var(--safe-bottom));
       padding-top: calc(var(--navh) + 8px);
       display:grid; place-items:center; overflow:hidden;
     }
-    /* When embedded, make hero full viewport (no inner scroll) */
     .is-embed .hero{
-      min-height: 100dvh;
-      padding-top: calc(var(--navh) + 6px);
+      height:100dvh; min-height:100dvh; padding-top:calc(var(--navh) + 6px);
     }
 
     .bg-wrapper{position:absolute; inset:0; z-index:-2}
     .bg-slide{position:absolute; inset:0; opacity:0; transition:opacity 800ms ease}
     .bg-slide.active{opacity:1}
     .bg-slide video,.bg-slide img{width:100%;height:100%;object-fit:cover;object-position:center}
+    .is-embed .bg-wrapper,
+    .is-embed .overlay{position:fixed; inset:0}
 
     .overlay{position:absolute; inset:0;
       background: radial-gradient(120% 60% at 50% 40%,rgba(0,0,0,.0),rgba(0,0,0,.55) 60%, rgba(0,0,0,.8));
-      z-index:-1
+      z-index:-1;
     }
 
-    .hero-content{
-      width:min(96%, var(--maxw));
-      padding: clamp(10px, 4vw, 34px);
-      text-align:center
-    }
-    .kicker{display:inline-block;margin-bottom:8px;padding:6px 10px;border-radius:999px;background:rgba(0,194,168,.18); color:#d6fffa;border:1px solid rgba(0,194,168,.35);font-weight:600}
-    .title{font-size:clamp(24px, 6vw, 56px); line-height:1.06; margin:10px 0 8px; font-weight:900; text-wrap:balance; text-shadow:0 12px 36px rgba(0,0,0,.45)}
-    .subtitle{font-size:clamp(13px, 2.6vw, 19px); color:var(--muted); max-width:860px; margin:0 auto 14px}
+    .hero-content{width:min(96%, var(--maxw)); padding: clamp(10px,4vw,34px); text-align:center}
+    .kicker{display:inline-block;margin-bottom:8px;padding:6px 10px;border-radius:999px;background:rgba(0,194,168,.18);color:#d6fffa;border:1px solid rgba(0,194,168,.35);font-weight:600}
+    .title{font-size:clamp(24px,6vw,56px);line-height:1.06;margin:10px 0 8px;font-weight:900;text-wrap:balance;text-shadow:0 12px 36px rgba(0,0,0,.45)}
+    .subtitle{font-size:clamp(13px,2.6vw,19px);color:var(--muted);max-width:860px;margin:0 auto 14px}
 
     .glass-panel{
-      display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:stretch;
-      background:var(--glass); border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow);
-      padding:10px; border-radius: var(--radius); max-width:980px; margin: 14px auto 0
+      display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:stretch;
+      background:var(--glass);border:1px solid rgba(255,255,255,.12);box-shadow:var(--shadow);
+      padding:10px;border-radius:var(--radius);max-width:980px;margin:14px auto 0
     }
-    .input{flex:1 1 320px; min-width:0; display:flex; align-items:center; gap:10px;
-      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px}
+    .input{flex:1 1 320px;min-width:0;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:10px 12px;border-radius:12px}
     .input input{background:transparent;border:0;outline:0;color:#fff;width:100%;font-size:16px}
     .btn{appearance:none;border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer}
-    .btn-primary{background:linear-gradient(135deg,var(--brand),#35ffd9); color:#062822}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.22); color:#fff}
+    .btn-primary{background:linear-gradient(135deg,var(--brand),#35ffd9);color:#062822}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.22);color:#fff}
 
-    /* extra-tight on very small phones to avoid overflow */
     @media (max-width:480px){
-      .title{font-size:clamp(22px, 6.6vw, 38px)}
-      .subtitle{font-size:clamp(12.5px, 3vw, 17px)}
-      .glass-panel{flex-direction:column; align-items:stretch; gap:8px}
-      .btn, .input{width:100%}
+      .title{font-size:clamp(22px,6.6vw,38px)}
+      .subtitle{font-size:clamp(12.5px,3vw,17px)}
+      .glass-panel{flex-direction:column;align-items:stretch;gap:8px}
+      .btn,.input{width:100%}
       .btn{padding:12px 14px}
     }
 
     /* ---------- FOOTER ---------- */
-    footer{padding:16px 20px max(16px, var(--safe-bottom)); color:#b5c8dc; background:#081521; border-top:1px solid rgba(255,255,255,.06)}
+    footer{padding:16px 20px max(16px, var(--safe-bottom));color:#b5c8dc;background:#081521;border-top:1px solid rgba(255,255,255,.06)}
 
-    @media (prefers-reduced-motion: reduce){
-      .bg-slide{transition:none}
-    }
+    @media (prefers-reduced-motion: reduce){ .bg-slide{transition:none} }
   </style>
 </head>
 <body>
@@ -134,9 +113,7 @@
       <div class="mark" aria-hidden="true"><span>V</span></div>
       VACT Eduturismo
     </div>
-
     <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="menuLinks">Menu</button>
-
     <nav class="links" id="menuLinks" aria-label="Site">
       <a href="#trips">Trips</a>
       <a href="#workshops">Workshops</a>
@@ -146,7 +123,6 @@
   </header>
 
   <main>
-    <!-- HERO with rotating video/image background -->
     <section class="hero" aria-label="Hero">
       <div class="bg-wrapper" id="bgWrapper"></div>
       <div class="overlay" aria-hidden="true"></div>
@@ -173,12 +149,9 @@
   </footer>
 
   <script>
-    // Detect if page is embedded inside an iframe (Odoo)
-    const EMBEDDED = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
-    if (EMBEDDED){
-      document.documentElement.classList.add('is-embed');
-      document.body.classList.add('is-embed');
-    }
+    // Detect if inside iframe
+    const EMBEDDED = (()=>{ try { return window.self !== window.top; } catch(e){ return true; } })();
+    if (EMBEDDED){ document.documentElement.classList.add('is-embed'); document.body.classList.add('is-embed'); }
 
     const slides = [
       { type: 'image', src: 'assets/images/red-fort.webp', alt: 'Red Fort' },
@@ -196,68 +169,47 @@
     const DURATION = 7000;
 
     function createSlideEl(item){
-      const wrap = document.createElement('div');
-      wrap.className = 'bg-slide';
+      const wrap = document.createElement('div'); wrap.className = 'bg-slide';
       if(item.type === 'video' && !prefersReduced){
         const v = document.createElement('video');
-        v.setAttribute('playsinline','');
-        v.setAttribute('muted','');
-        v.setAttribute('autoplay','');
-        v.setAttribute('loop','');
-        v.setAttribute('preload','none');
+        v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.setAttribute('autoplay',''); v.setAttribute('loop',''); v.setAttribute('preload','none');
         if(item.poster) v.setAttribute('poster', item.poster);
         (item.sources||[]).forEach(s=>{ const source = document.createElement('source'); source.src=s.src; source.type=s.type; v.appendChild(source); });
         wrap.appendChild(v);
       } else {
         const img = document.createElement('img');
-        img.loading='eager'; img.decoding='async';
-        img.src = item.src || item.poster; img.alt = item.alt || '';
+        img.loading='eager'; img.decoding='async'; img.src = item.src || item.poster; img.alt = item.alt || '';
         wrap.appendChild(img);
       }
       return wrap;
     }
 
     function mountSlides(){
-      slides.forEach((s,i)=>{
-        const el = createSlideEl(s);
-        if(i===0) el.classList.add('active');
-        bgWrapper.appendChild(el);
-      });
+      slides.forEach((s,i)=>{ const el = createSlideEl(s); if(i===0) el.classList.add('active'); bgWrapper.appendChild(el); });
     }
-
     function nextSlide(){
       const children = [...bgWrapper.children]; if(children.length<2) return;
-      children[current].classList.remove('active');
-      current = (current+1) % children.length;
-      children[current].classList.add('active');
+      children[current].classList.remove('active'); current = (current+1) % children.length; children[current].classList.add('active');
     }
+    function loop(){ clearInterval(timer); if(playing){ timer = setInterval(nextSlide, DURATION); } }
 
-    function loop(){
-      clearInterval(timer);
-      if(playing){ timer = setInterval(nextSlide, DURATION); }
-    }
-
-    // Mobile menu toggle
     menuToggle?.addEventListener('click', ()=>{
       const open = menuLinks.classList.toggle('open');
       menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-    // Pause / play background
     btnPlay?.addEventListener('click',()=>{
       playing = !playing; btnPlay.textContent = playing? 'Pause Background' : 'Play Background';
       [...bgWrapper.querySelectorAll('video')].forEach(v=> playing? v.play().catch(()=>{}): v.pause());
       loop();
     });
 
-    // Simple search redirect
     document.getElementById('btnSearch')?.addEventListener('click',()=>{
       const q = (document.getElementById('q').value||'').trim();
       if(!q){ alert('Type a place or theme to search trips.'); return; }
       window.location.href = '/search?q=' + encodeURIComponent(q);
     });
 
-    // Set --navh to actual nav height (prevents hero overlap on mobile)
     function setNavHeightVar(){
       const h = nav?.offsetHeight || 64;
       document.documentElement.style.setProperty('--navh', h + 'px');
@@ -266,7 +218,6 @@
     window.addEventListener('load', setNavHeightVar);
     setNavHeightVar();
 
-    // init
     mountSlides(); loop();
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
