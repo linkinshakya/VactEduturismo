@@ -127,6 +127,43 @@
     footer{padding:16px 20px max(16px, var(--safe-bottom));color:#b5c8dc;background:#081521;border-top:1px solid rgba(255,255,255,.06)}
 
     @media (prefers-reduced-motion: reduce){ .bg-slide{transition:none} }
+    /* --- MOBILE: make search a single line, not a box --- */
+@media (max-width: 600px) {
+  /* kill the glass container look */
+  .glass-panel{
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    gap: 10px !important;
+    margin-top: 12px !important;
+  }
+
+  /* make the input a slim underline */
+  .input{
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 2px solid rgba(255,255,255,0.6) !important;
+    border-radius: 0 !important;
+    padding: 6px 0 !important;
+    align-items: center;
+  }
+  .input input{
+    background: transparent !important;
+    border: 0 !important;
+    outline: none !important;
+    width: 100%;
+    color: #fff;
+    font-size: 16px;
+    padding: 4px 0 !important;
+  }
+  .input input::placeholder{ color: rgba(255,255,255,0.7); }
+
+  /* buttons still full-width but without box glow behind */
+  .btn{ width:100%; }
+}
+
+    
   </style>
 </head>
 <body>
