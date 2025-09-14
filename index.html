@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>VACT Eduturismo — Explore • Learn • Travel</title>
   <meta name="theme-color" content="#0b1b2a" />
-
   <style>
     :root{
       --bg:#0b1b2a;
@@ -17,7 +16,7 @@
       --shadow:0 20px 40px rgba(0,0,0,.25);
       --radius: 18px;
       --maxw: 1200px;
-      --navh: 64px;
+      --navh: 64px; /* set by JS */
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
@@ -28,11 +27,21 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
       color:var(--fg); background:var(--bg);
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+      overflow-x:hidden; /* prevent side scroll */
+      touch-action:manipulation;
     }
+
+    /* When embedded in Odoo (iframe), add class .is-embed to <html> + <body> via JS */
+    html.is-embed, body.is-embed{
+      height:100dvh;           /* hard lock to viewport */
+      overflow:hidden;         /* remove inner scrollbar */
+      overscroll-behavior:none;
+    }
+    body.is-embed footer{display:none;} /* no extra height below hero */
 
     /* ---------- NAV ---------- */
     .nav{
-      position:fixed; inset:0 0 auto 0; height:auto;
+      position:fixed; inset:0 0 auto 0;
       z-index:50; display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding: max(10px, var(--safe-top)) clamp(12px,3vw,28px);
       backdrop-filter:saturate(1.2) blur(8px);
@@ -50,8 +59,11 @@
     @media (max-width:640px){
       .links{display:none}
       .menu-toggle{display:inline-block}
-      .links.open{display:flex; position:absolute; top:calc(var(--navh)); right:12px; left:12px;
-        background:rgba(6,14,22,.96); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:8px; gap:4px}
+      .links.open{
+        display:flex; position:absolute; top:calc(var(--navh)); right:12px; left:12px;
+        background:rgba(6,14,22,.96); border:1px solid rgba(255,255,255,.12);
+        border-radius:14px; padding:8px; gap:4px
+      }
       .links.open a{display:block; width:100%; text-align:center}
     }
 
@@ -59,9 +71,15 @@
     .hero{
       position:relative;
       min-height: calc(100dvh - var(--navh) - var(--safe-bottom));
-      padding-top: calc(var(--navh) + 10px);
+      padding-top: calc(var(--navh) + 8px);
       display:grid; place-items:center; overflow:hidden;
     }
+    /* When embedded, make hero full viewport (no inner scroll) */
+    .is-embed .hero{
+      min-height: 100dvh;
+      padding-top: calc(var(--navh) + 6px);
+    }
+
     .bg-wrapper{position:absolute; inset:0; z-index:-2}
     .bg-slide{position:absolute; inset:0; opacity:0; transition:opacity 800ms ease}
     .bg-slide.active{opacity:1}
@@ -74,17 +92,17 @@
 
     .hero-content{
       width:min(96%, var(--maxw));
-      padding: clamp(12px, 4vw, 40px);
+      padding: clamp(10px, 4vw, 34px);
       text-align:center
     }
     .kicker{display:inline-block;margin-bottom:8px;padding:6px 10px;border-radius:999px;background:rgba(0,194,168,.18); color:#d6fffa;border:1px solid rgba(0,194,168,.35);font-weight:600}
-    .title{font-size:clamp(26px, 6vw, 60px); line-height:1.06; margin:10px 0 8px; font-weight:900; text-wrap:balance; text-shadow:0 12px 36px rgba(0,0,0,.45)}
-    .subtitle{font-size:clamp(14px, 2.6vw, 20px); color:var(--muted); max-width:900px; margin:0 auto 16px}
+    .title{font-size:clamp(24px, 6vw, 56px); line-height:1.06; margin:10px 0 8px; font-weight:900; text-wrap:balance; text-shadow:0 12px 36px rgba(0,0,0,.45)}
+    .subtitle{font-size:clamp(13px, 2.6vw, 19px); color:var(--muted); max-width:860px; margin:0 auto 14px}
 
     .glass-panel{
       display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:stretch;
       background:var(--glass); border:1px solid rgba(255,255,255,.12); box-shadow:var(--shadow);
-      padding:10px; border-radius: var(--radius); max-width:980px; margin: 16px auto 0
+      padding:10px; border-radius: var(--radius); max-width:980px; margin: 14px auto 0
     }
     .input{flex:1 1 320px; min-width:0; display:flex; align-items:center; gap:10px;
       background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px}
@@ -93,13 +111,13 @@
     .btn-primary{background:linear-gradient(135deg,var(--brand),#35ffd9); color:#062822}
     .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.22); color:#fff}
 
+    /* extra-tight on very small phones to avoid overflow */
     @media (max-width:480px){
-      .hero{padding-top: calc(var(--navh) + 6px)}
-      .glass-panel{flex-direction:column; align-items:stretch}
+      .title{font-size:clamp(22px, 6.6vw, 38px)}
+      .subtitle{font-size:clamp(12.5px, 3vw, 17px)}
+      .glass-panel{flex-direction:column; align-items:stretch; gap:8px}
       .btn, .input{width:100%}
       .btn{padding:12px 14px}
-      .title{font-size:clamp(24px, 6.8vw, 42px)}
-      .subtitle{font-size:clamp(13px, 3.2vw, 18px)}
     }
 
     /* ---------- FOOTER ---------- */
@@ -155,6 +173,13 @@
   </footer>
 
   <script>
+    // Detect if page is embedded inside an iframe (Odoo)
+    const EMBEDDED = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
+    if (EMBEDDED){
+      document.documentElement.classList.add('is-embed');
+      document.body.classList.add('is-embed');
+    }
+
     const slides = [
       { type: 'image', src: 'assets/images/red-fort.webp', alt: 'Red Fort' },
       { type: 'image', src: 'assets/images/lotus-temple-newdelhi.jpeg', alt: 'Lotus Temple' }
@@ -212,23 +237,27 @@
       if(playing){ timer = setInterval(nextSlide, DURATION); }
     }
 
+    // Mobile menu toggle
     menuToggle?.addEventListener('click', ()=>{
       const open = menuLinks.classList.toggle('open');
       menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
+    // Pause / play background
     btnPlay?.addEventListener('click',()=>{
       playing = !playing; btnPlay.textContent = playing? 'Pause Background' : 'Play Background';
       [...bgWrapper.querySelectorAll('video')].forEach(v=> playing? v.play().catch(()=>{}): v.pause());
       loop();
     });
 
+    // Simple search redirect
     document.getElementById('btnSearch')?.addEventListener('click',()=>{
       const q = (document.getElementById('q').value||'').trim();
       if(!q){ alert('Type a place or theme to search trips.'); return; }
       window.location.href = '/search?q=' + encodeURIComponent(q);
     });
 
+    // Set --navh to actual nav height (prevents hero overlap on mobile)
     function setNavHeightVar(){
       const h = nav?.offsetHeight || 64;
       document.documentElement.style.setProperty('--navh', h + 'px');
@@ -237,6 +266,7 @@
     window.addEventListener('load', setNavHeightVar);
     setNavHeightVar();
 
+    // init
     mountSlides(); loop();
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
