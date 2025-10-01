@@ -11,7 +11,7 @@
       --brand:#00c2a8; --brand-2:#ffb703;
       --glass: rgba(7,17,27,.55); --shadow:0 20px 40px rgba(0,0,0,.25);
       --radius:18px; --maxw:1200px;
-      --navh:64px; /* set by JS */ 
+      --navh:64px; 
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
@@ -24,14 +24,12 @@
       overflow-x:hidden;
     }
 
-    /* ====== EMBED MODE (inside Odoo iframe) ====== */
     html.is-embed, body.is-embed{
       position:fixed; inset:0; width:100%; height:100dvh;
       overflow:hidden; overscroll-behavior:none;
     }
     body.is-embed footer{display:none;}
 
-    /* ---------- NAV ---------- */
     .nav{
       position:fixed; inset:0 0 auto 0; z-index:50;
       display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -54,7 +52,6 @@
       .links.open a{display:block;width:100%;text-align:center}
     }
 
-    /* ---------- HERO ---------- */
     .hero{
       position:relative;
       min-height: calc(100svh - var(--navh) - var(--safe-bottom));
@@ -82,88 +79,8 @@
     .title{font-size:clamp(24px,6vw,56px);line-height:1.06;margin:10px 0 8px;font-weight:900;text-wrap:balance;text-shadow:0 12px 36px rgba(0,0,0,.45)}
     .subtitle{font-size:clamp(13px,2.6vw,19px);color:var(--muted);max-width:860px;margin:0 auto 14px}
 
-    .glass-panel{
-      display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:stretch;
-      background:var(--glass);border:1px solid rgba(255,255,255,.12);box-shadow:var(--shadow);
-      padding:10px;border-radius:var(--radius);max-width:980px;margin:14px auto 0
-    }
-    .input {
-  flex: 1 1 320px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;        /* no box background */
-  border: none;                   /* remove box border */
-  border-bottom: 2px solid rgba(255,255,255,0.6); /* single line underline */
-  padding: 6px 0;                 /* slim vertical padding */
-}
-
-.input input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #fff;
-  width: 100%;
-  font-size: 16px;
-  padding: 4px;                   /* small padding for text */
-}
-.input input:focus {
-  border-bottom: 2px solid var(--brand); /* teal underline on focus */
-}
-.input input::placeholder {
-  color: rgba(255,255,255,0.7);
-}
-
-
-    @media (max-width:480px){
-      .title{font-size:clamp(22px,6.6vw,38px)}
-      .subtitle{font-size:clamp(12.5px,3vw,17px)}
-      .glass-panel{flex-direction:column;align-items:stretch;gap:8px}
-      .btn,.input{width:100%}
-      .btn{padding:12px 14px}
-    }
-
-    /* ---------- FOOTER ---------- */
     footer{padding:16px 20px max(16px, var(--safe-bottom));color:#b5c8dc;background:#081521;border-top:1px solid rgba(255,255,255,.06)}
-
     @media (prefers-reduced-motion: reduce){ .bg-slide{transition:none} }
-    /* --- MOBILE: make search a single line, not a box --- */
-@media (max-width: 600px) {
-  /* kill the glass container look */
-  .glass-panel{
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    gap: 10px !important;
-    margin-top: 12px !important;
-  }
-
-  /* make the input a slim underline */
-  .input{
-    background: transparent !important;
-    border: 0 !important;
-    border-bottom: 2px solid rgba(255,255,255,0.6) !important;
-    border-radius: 0 !important;
-    padding: 6px 0 !important;
-    align-items: center;
-  }
-  .input input{
-    background: transparent !important;
-    border: 0 !important;
-    outline: none !important;
-    width: 100%;
-    color: #fff;
-    font-size: 16px;
-    padding: 4px 0 !important;
-  }
-  .input input::placeholder{ color: rgba(255,255,255,0.7); }
-
-  /* buttons still full-width but without box glow behind */
-  .btn{ width:100%; }
-}
-
-    
   </style>
 </head>
 <body>
@@ -190,8 +107,6 @@
         <span class="kicker">Explore • Learn • Travel</span>
         <h1 class="title">Make every field trip unforgettable.</h1>
         <p class="subtitle">Curated edutourism to Museums, Heritage Sites, Science Centres and Workshops across Delhi–NCR and beyond. Safe, supervised, and genuinely engaging for Classes 6–10 and families.</p>
-
-        
       </div>
     </section>
   </main>
@@ -201,7 +116,6 @@
   </footer>
 
   <script>
-    // Detect if inside iframe
     const EMBEDDED = (()=>{ try { return window.self !== window.top; } catch(e){ return true; } })();
     if (EMBEDDED){ document.documentElement.classList.add('is-embed'); document.body.classList.add('is-embed'); }
 
@@ -248,14 +162,6 @@
       const open = menuLinks.classList.toggle('open');
       menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
-
-    btnPlay?.addEventListener('click',()=>{
-      playing = !playing; btnPlay.textContent = playing? 'Pause Background' : 'Play Background';
-      [...bgWrapper.querySelectorAll('video')].forEach(v=> playing? v.play().catch(()=>{}): v.pause());
-      loop();
-    });
-
-    
 
     function setNavHeightVar(){
       const h = nav?.offsetHeight || 64;
