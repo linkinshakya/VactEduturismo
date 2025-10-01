@@ -30,9 +30,11 @@
     }
     body.is-embed footer{display:none;}
 
+    /* ---------- NAV ---------- */
     .nav{
       position:fixed; inset:0 0 auto 0; z-index:50;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      display:flex; align-items:center; justify-content:flex-start; /* only logo */
+      gap:10px;
       padding: max(10px, var(--safe-top)) clamp(12px,3vw,28px);
       backdrop-filter:saturate(1.2) blur(8px);
       background:linear-gradient(180deg, rgba(5,10,16,.9), rgba(5,10,16,.35) 60%, transparent);
@@ -40,18 +42,8 @@
     .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
     .logo .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#35e0c9);display:grid;place-items:center;box-shadow:var(--shadow)}
     .logo .mark span{font-weight:900;color:#062822}
-    .links{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-    .nav a{color:var(--fg);text-decoration:none;padding:8px 10px;border-radius:10px;opacity:.92}
-    .nav a:hover{background:rgba(255,255,255,.08)}
-    .cta{background:linear-gradient(135deg,var(--brand),#22e6cc);color:#04221e;font-weight:700}
-    .menu-toggle{display:none;background:transparent;border:1px solid rgba(255,255,255,.25);color:var(--fg);padding:8px 12px;border-radius:10px}
-    @media (max-width:640px){
-      .links{display:none}
-      .menu-toggle{display:inline-block}
-      .links.open{display:flex;position:absolute;top:calc(var(--navh));right:12px;left:12px;background:rgba(6,14,22,.96);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:8px;gap:4px}
-      .links.open a{display:block;width:100%;text-align:center}
-    }
 
+    /* ---------- HERO ---------- */
     .hero{
       position:relative;
       min-height: calc(100svh - var(--navh) - var(--safe-bottom));
@@ -79,7 +71,9 @@
     .title{font-size:clamp(24px,6vw,56px);line-height:1.06;margin:10px 0 8px;font-weight:900;text-wrap:balance;text-shadow:0 12px 36px rgba(0,0,0,.45)}
     .subtitle{font-size:clamp(13px,2.6vw,19px);color:var(--muted);max-width:860px;margin:0 auto 14px}
 
+    /* ---------- FOOTER ---------- */
     footer{padding:16px 20px max(16px, var(--safe-bottom));color:#b5c8dc;background:#081521;border-top:1px solid rgba(255,255,255,.06)}
+
     @media (prefers-reduced-motion: reduce){ .bg-slide{transition:none} }
   </style>
 </head>
@@ -89,13 +83,6 @@
       <div class="mark" aria-hidden="true"><span>V</span></div>
       VACT Eduturismo
     </div>
-    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="menuLinks">Menu</button>
-    <nav class="links" id="menuLinks" aria-label="Site">
-      <a href="#trips">Trips</a>
-      <a href="#workshops">Workshops</a>
-      <a href="#safety">Safety</a>
-      <a class="cta" href="#contact">Enquire</a>
-    </nav>
   </header>
 
   <main>
@@ -112,10 +99,11 @@
   </main>
 
   <footer>
-    © <span id="year"></span> VACT Eduturismo • Safety-first tours • Teachers CPR-certified • Live check-in
+    © <span id="year"></span> VACT Eduturismo • Safety-first tours • Live check-in
   </footer>
 
   <script>
+    // Detect if inside iframe
     const EMBEDDED = (()=>{ try { return window.self !== window.top; } catch(e){ return true; } })();
     if (EMBEDDED){ document.documentElement.classList.add('is-embed'); document.body.classList.add('is-embed'); }
 
@@ -126,8 +114,6 @@
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const bgWrapper = document.getElementById('bgWrapper');
-    const menuToggle = document.getElementById('menuToggle');
-    const menuLinks = document.getElementById('menuLinks');
     const nav = document.getElementById('siteNav');
 
     let current = 0, playing = true, timer = null;
@@ -157,11 +143,6 @@
       children[current].classList.remove('active'); current = (current+1) % children.length; children[current].classList.add('active');
     }
     function loop(){ clearInterval(timer); if(playing){ timer = setInterval(nextSlide, DURATION); } }
-
-    menuToggle?.addEventListener('click', ()=>{
-      const open = menuLinks.classList.toggle('open');
-      menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
 
     function setNavHeightVar(){
       const h = nav?.offsetHeight || 64;
